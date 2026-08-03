@@ -1,10 +1,11 @@
 import './App.css';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'; 
 import Login from './pages/Login/Login';
-import Register from './pages/Register/Registrer';
-import Dashboard from './pages/Dashboard/Dashboard';
+import Register from './pages/admin/Register/Registrer';
+import Dashboard from './pages/admin/Dashboard/Dashboard';
 import Layout from './component/Layout/Layout';
-import DashboardDetail from './pages/DashboardDetail/DashboardDetail';
+import DashboardDetail from './pages/admin/DashboardDetail/DashboardDetail';
+import Course from './pages/admin/Course/Course';
 //import Header from './component/Header/Header';
 //import Sidebar from './component/Sidebar/sidebar';
 
@@ -19,6 +20,7 @@ function App() {
           <Route path="/register" element={<Register />}/>
           <Route path="/dashboard" element={<Layout><Dashboard/></Layout>}/>
           <Route path="/dashboard/:professorId" element={<Layout><DashboardDetail/></Layout>}/>
+          <Route path="/Course" element={<Layout><Course/></Layout>}/>
           {/* <Route path="/Header" element={<Header/>}/> */}
           {/*<Route path="/sidebar" element={<Sidebar/>}/>*/}
 
