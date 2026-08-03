@@ -1,0 +1,137 @@
+.Container{
+  padding: 32px 40px;
+  background-color: transparent;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.Header{
+  margin-bottom: 60px;
+}
+
+.professorTitle{
+  font-size: 24px;
+  font-weight: 700;
+  color: black;
+  margin: 0;
+}
+
+.professorRole{
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text-description);
+  margin-left: 6px;
+}
+
+.detailSubtitle{
+  font-size: 13px;
+  color: var(--text-description);
+  margin-top: 6px;
+}
+
+.Content{
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.sectionRow{
+  display: flex;
+  align-items: flex-start;
+}
+
+.rowLabel{
+  width: 100px;
+  font-size: 18px;
+  font-weight: 700;
+  color: black;
+  padding-top: 3px;
+}
+
+.table{
+  flex: 1;
+  border: 1px solid #b0b0b0;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  margin-right: 15px;
+  margin-bottom: 5px;
+}
+
+.tableHeaderRow{
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  background-color: #d8d8d8;
+  border-bottom: 1px solid #b0b0b0;
+}
+
+.tableHeaderCell{
+  padding: 10px 0;
+  text-align: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: black;
+  border-right: 1px solid #b0b0b0;
+}
+
+.tableBodyRow{
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  background-color: #ffffff;
+}
+
+.tableBodyCell{
+  padding: 15px 6px;
+  text-align: center;
+  border-right: 1px solid #b0b0b0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 20px;
+}
+
+.tableBodyCell.highlight{
+  background-color: #ffff00;
+}
+
+.subjectName{
+  font-size: 18px;
+  font-weight: 700;
+  color: black;
+  margin-bottom: 4px;
+}
+
+.subjectCredits{
+  font-size: 15px;
+  color: var(--text-description);
+}
+
+.creditsSection{
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: black;
+  margin: 16px 0;
+}
+
+.creditsValue{
+  margin-left: 8px;
+}
+
+.memoSection{
+  display: flex;
+  align-items: flex-start;
+}
+
+.memoBox{
+  flex: 1;
+  height: 200px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 16px;
+  background-color: #ffffff;
+  font-size: 14px;
+  color: black;
+  box-sizing: border-box;
+}
