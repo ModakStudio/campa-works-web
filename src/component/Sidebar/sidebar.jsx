@@ -15,7 +15,7 @@ const menuItems =
 [
   { name: '대시보드', path: '/dashboard', icon: dashboardIcon },
   { name: '과목 배정 관리', path: '/assignments', icon: assignmentIcon },
-  { name: '시설 관리', path: '/facilities', icon: facilityIcon },
+  { name: '시설 관리', path: '/facility', icon: facilityIcon },
   { name: '과목 관리', path: '/course', icon: courseIcon },
   { name: '전공 관리', path: '/majors', icon: majorIcon },
   { name: '강의실 관리', path: '/lectureroom', icon: classroomIcon },

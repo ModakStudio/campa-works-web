@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './Lectureroom.css';
 import downloadIcon from '../../../assets/icons/down.png';
 import searchIcon from '../../../assets/icons/sear.png';
