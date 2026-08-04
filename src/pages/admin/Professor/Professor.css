@@ -1,0 +1,91 @@
+.Container{
+    padding: 32px 40px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.Header{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+.page_title{
+    font-size: 24px;
+    font-weight: 700;
+    color: black;
+    margin: 0 0 3px 0;
+}
+
+.page_subtitle{
+    font-size: 14px;
+    color: var(--text-description);
+    margin: 0;
+}
+
+.table_container{
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    margin-top: 25px;
+}
+
+.professor_table{
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    font-size: 13px;
+}
+
+.professor_table th{
+    background-color: #bebebe;
+    color: #808080;
+    font-weight: 500;
+    padding: 10px 12px;
+    border-bottom: 1px solid #a0a0a0;
+}
+
+.professor_table td{
+    padding: 12px;
+    border-bottom: 1px solid var(--border-color);
+    color: #a5a5a5;
+    vertical-align: middle;
+}
+
+.professor_table td.col_id{
+    color: #a5a5a5;
+}
+
+.col_professor_info{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.col_name{
+    font-weight: 700;
+    color: black;
+}
+
+.col_lab{
+    font-size: 11px;
+    color: #888888;
+    margin-top: 2px;
+}
+
+.status_icon_img{
+    width: 25px;
+    height: 25px;
+    object-fit: contain;
+    vertical-align: middle;
+}
+
+.professor_table tbody tr:hover{
+    background-color: #f9f9f9;
+}
+
+.no_data{
+    padding: 40px 0;
+    color: #888888;
+}
