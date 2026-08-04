@@ -18,7 +18,7 @@ const menuItems =
   { name: '시설 관리', path: '/facilities', icon: facilityIcon },
   { name: '과목 관리', path: '/course', icon: courseIcon },
   { name: '전공 관리', path: '/majors', icon: majorIcon },
-  { name: '강의실 관리', path: '/classrooms', icon: classroomIcon },
+  { name: '강의실 관리', path: '/lectureroom', icon: classroomIcon },
   { name: '시간표 관리', path: '/schedules', icon: scheduleIcon },
   { name: '출장 신청 관리', path: '/business-trips', icon: businessTripIcon },
   { name: '교수 현황', path: '/professors', icon: professorIcon },
