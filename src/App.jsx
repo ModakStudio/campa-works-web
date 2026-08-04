@@ -8,6 +8,7 @@ import DashboardDetail from './pages/admin/DashboardDetail/DashboardDetail';
 import Course from './pages/admin/Course/Course';
 import Lectureroom from './pages/admin/Lectureroom/Lectureroom';
 import Facility from './pages/admin/Facility/Facility';
+import Professor from './pages/admin/Professor/Professor';
 //import Header from './component/Header/Header';
 //import Sidebar from './component/Sidebar/sidebar';
 
@@ -25,6 +26,7 @@ function App() {
           <Route path="/course" element={<Layout><Course/></Layout>}/>
           <Route path="/lectureroom" element={<Layout><Lectureroom/></Layout>}/>
           <Route path="/facility" element={<Layout><Facility/></Layout>}/>
+          <Route path="/professor" element={<Layout><Professor/></Layout>}/>
           {/* <Route path="/Header" element={<Header/>}/> */}
           {/*<Route path="/sidebar" element={<Sidebar/>}/>*/}
 
