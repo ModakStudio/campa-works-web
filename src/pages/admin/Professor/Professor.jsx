@@ -3,6 +3,23 @@ import './Professor.css';
 import checkedIcon from '../../../assets/icons/check.png';
 import axios from 'axios';
 
+const formatPosition = (position) => {
+    switch (position) {
+        case 'PROFESSOR':
+            return '전임 교수';
+        case 'INVITED_PROFESSOR':
+            return '초빙 교수';
+        case 'CONCURRENT':
+            return '겸임 교수';
+        case 'VISITING_PROFESSOR':
+            return '방문 교수';
+        case 'EMERITUS':
+            return '명예 교수';
+        default:
+            return position || '오류';
+    }
+};
+
 export default function Professor() {
     const [professorList, setProfessorList] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -55,7 +72,7 @@ export default function Professor() {
                                         <div className="col_name">{row.user?.name}</div>
                                         <div className="col_lab">{row.office}</div>
                                     </td>
-                                    <td>{row.position}</td>
+                                    <td>{formatPosition(row.position)}</td>
                                     <td>{row.user?.email}</td>
                                     <td>
                                         <img
