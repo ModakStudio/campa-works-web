@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import './Facility.css';
 import * as XLSX from 'xlsx';
+import axios from 'axios';
 import downloadIcon from '../../../assets/icons/down.png';
 import searchIcon from '../../../assets/icons/sear.png';
 
@@ -13,6 +14,8 @@ const DummyData = [
 
 export default function Facility() {
     const [searchTerm, setSearchTerm] = useState('');
+    const fileInputRef = useRef(null);
+
     const filteredData = DummyData.filter(
     (item) =>
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) || item.description.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -27,19 +30,47 @@ export default function Facility() {
 
         const worksheet = XLSX.utils.json_to_sheet(templateData);
 
-        worksheet['!cols'] = 
-        [
-            { wch: 25 },
-            { wch: 40 }, 
-        ];
+        worksheet['!cols'] = [{ wch: 25 },{ wch: 40 }];
 
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, '시설등록양식');
         XLSX.writeFile(workbook, '시설_등록_기본_양식.xlsx');
     };
 
+    const handleBulkInserClick = () => {
+        if (fileInputRef.current) {
+                fileInputRef.current.click();
+        }
+    };
+
+    const handleFileChange = async(e) => {
+        const file = e.target.files[0];
+        if(!file) return;
+
+        const formData = new FormData();
+        formData.append('file',file);
+
+        try{
+            const response = await axios.post('http://localhost:8000/upload-excel', formData,
+                {
+                    headers:
+                    {
+                        'Content-Type' : 'multipart/form-data'
+                    },
+                });
+
+                alert("엑셀 등록 성공 "+ response.data.total_count+"건 처리 완료");
+        }catch(error){
+            console.error('엑셀 등록 실패:', error);
+            alert("엑셀 등록 실패" + (error.response?.data?.detail || "통신 오류"));
+        }finally{
+            e.target.value = '';
+        }
+    };
+
   return (
     <div className="Container">
+        <input type="file" ref={fileInputRef} style={{ display: 'none' }} accept=".xlsx, .xls" onChange={handleFileChange} />
         <div className="Header">
             <div>
               <h1 className="page_title">시설 관리</h1>
@@ -51,11 +82,11 @@ export default function Facility() {
                   <img src={downloadIcon} alt="다운로드 아이콘" className="btn_icon_img" />
                   기본 양식 다운로드
                 </button>
-                <button className="btn">
+                <button type="button" className="btn" onClick={handleBulkInserClick}>
                   <span className="btn_icon">+</span>
                   시설 다중 등록
                 </button>
-                <button className="btn">
+                <button type="button" className="btn">
                   <span className="btn_icon">+</span>
                   시설 등록
                 </button>
