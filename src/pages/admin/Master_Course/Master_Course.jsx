@@ -67,10 +67,30 @@ export default function Course() {
                 const worksheet = workbook.Sheets[firstSheetName];
                 const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-                if (jsonData.length === 0) {
-                    alert('엑셀 파일에 데이터가 없습니다. 확인해주세요.');
-                    return;
+                const errors = [];
+                const isEmpty = (val) => val === undefined || val === null || String(val).trim() === '';
+                for (let i = 0; i < jsonData.length; i++){
+                    const row = jsonData[i];
+                    const rownum = i + 2;
+                    if (isEmpty(row['과목코드']))
+                        errors.push("엑셀 "+ rownum +"행 과목코드");
+                    if (isEmpty(row['과목명']))
+                        errors.push("엑셀 "+ rownum +"행 과목명");
+                    if (isEmpty(row['학점']))
+                        errors.push("엑셀 "+ rownum +"행 학점");
+                    if (isEmpty(row['이론']))
+                        errors.push("엑셀 "+ rownum +"행 이론");
+                    if (isEmpty(row['실습']))
+                        errors.push("엑셀 "+ rownum +"행 실습");
+                    if (isEmpty(row['대학/대학원']))
+                        errors.push("엑셀 "+ rownum +"행 대학/대학원");
                 }
+
+                if (errors.length > 0)
+                    {
+                        alert("다음 항목의 값들이 비어있습니다. 채워주세요.\n- " + errors.join("\n- "));
+                        return;
+                    }
 
                 const trans = jsonData.map((row) => {
                     const rawType = row['대학/대학원'] || '';
