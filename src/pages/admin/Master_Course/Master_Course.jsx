@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './Master_Course.css';
+import * as XLSX from 'xlsx';
 import downloadIcon from '../../../assets/icons/down.png';
 import searchIcon from '../../../assets/icons/sear.png';
 
@@ -20,9 +21,32 @@ export default function Course() {
   const [searchTerm, setSearchTerm] = useState('');
   const [courseList, setCourseList] = useState([]);
 
+    
 
-  const filteredCourses = Courses.filter(
-    (course) => course.name.includes(searchTerm) || course.code.includes(searchTerm));
+
+    const filteredCourses = Courses.filter(
+        (course) => course.name?.toLowerCase().includes(searchTerm.toLowerCase()) || course.code?.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    const handleDownloadTemplate = () => {
+        const templateData = [
+            {
+                '과목코드': '예시 과목코드',
+                '과목명': '예시 과목명',
+                '학점': '예시 학점',
+                '이론': '예시 이론',
+                '실습': '예시 실습',
+                '대학/대학원': '대학 or 대학원'
+            }
+        ];
+
+        const worksheet = XLSX.utils.json_to_sheet(templateData);
+        worksheet['!cols'] = [{ wch: 15 }, { wch: 20 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 15 }];
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, '과목등록양식');
+        XLSX.writeFile(workbook, '과목_등록_기본_양식.xlsx');
+    };
+
+
 
     return (
         <div className="Container">
@@ -33,7 +57,7 @@ export default function Course() {
                 </div>
 
                 <div className="button_group">
-                    <button className="btn">
+                    <button className="btn" onClick={handleDownloadTemplate}>
                         <img src={downloadIcon} alt="다운로드 아이콘" className="btn_icon_img" />
                         기본 양식 다운로드
                     </button>
