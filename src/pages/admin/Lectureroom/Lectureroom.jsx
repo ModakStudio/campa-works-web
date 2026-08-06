@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './Lectureroom.css';
+import * as XLSX from 'xlsx';
 import downloadIcon from '../../../assets/icons/down.png';
 import searchIcon from '../../../assets/icons/sear.png';
 
@@ -17,11 +18,28 @@ const DummyData = [
 ];
 
 export default function Lectureroom() {
-  const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredData = DummyData.filter(
-    (item) =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) || item.location.includes(searchTerm));
+    const filteredData = DummyData.filter(
+        (item) =>
+          item.name.toLowerCase().includes(searchTerm.toLowerCase()) || item.location.includes(searchTerm));
+
+    const handleDownloadTemplate = () => {
+        const templateData = [
+            {
+                '건물':'예시 건물명',
+                '강의실명':'예시 강의실명',
+                '수용인원':'예시 수용인원',
+                '사용 여부' : '가능 or 불가'
+            }
+        ];
+
+        const worksheet = XLSX.utils.json_to_sheet(templateData);
+        worksheet['!cols'] = [{ wch: 15 }, { wch: 20 }, { wch: 10 }, { wch: 10 }];
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, '강의실등록양식');
+        XLSX.writeFile(workbook, '강의실_등록_기본_양식.xlsx');
+    };
 
   return (
     <div className="Container">
@@ -32,7 +50,7 @@ export default function Lectureroom() {
         </div>
 
         <div className="button_group">
-          <button className="btn">
+          <button className="btn" onClick={handleDownloadTemplate}>
             <img src={downloadIcon} alt="다운로드 아이콘" className="btn_icon_img" />
             기본 양식 다운로드
           </button>
