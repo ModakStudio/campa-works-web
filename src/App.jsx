@@ -5,7 +5,7 @@ import Register from './pages/admin/Register/Registrer';
 import Dashboard from './pages/admin/Dashboard/Dashboard';
 import Layout from './component/Layout/Layout';
 import DashboardDetail from './pages/admin/DashboardDetail/DashboardDetail';
-import Course from './pages/admin/Master_Course/Master_Course';
+import MasterCourse from './pages/admin/Master_Course/Master_Course';
 import Lectureroom from './pages/admin/Lectureroom/Lectureroom';
 import Facility from './pages/admin/Facility/Facility';
 import Professor from './pages/admin/Professor/Professor';
@@ -23,7 +23,7 @@ function App() {
           <Route path="/register" element={<Register />}/>
           <Route path="/dashboard" element={<Layout><Dashboard/></Layout>}/>
           <Route path="/dashboard/:professorId" element={<Layout><DashboardDetail/></Layout>}/>
-          <Route path="/course" element={<Layout><Course/></Layout>}/>
+          <Route path="/mastercourse" element={<Layout><MasterCourse/></Layout>}/>
           <Route path="/lectureroom" element={<Layout><Lectureroom/></Layout>}/>
           <Route path="/facility" element={<Layout><Facility/></Layout>}/>
           <Route path="/professor" element={<Layout><Professor/></Layout>}/>
