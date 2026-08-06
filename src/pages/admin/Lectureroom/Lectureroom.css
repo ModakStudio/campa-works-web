@@ -130,8 +130,8 @@
 }
 
 .lectureroom_table td.col_name {
-  font-weight: 700;
-  color: black;
+  font-weight: 500;
+  color: #a5a5a5;
 }
 
 .lectureroom_table tbody tr:hover {
