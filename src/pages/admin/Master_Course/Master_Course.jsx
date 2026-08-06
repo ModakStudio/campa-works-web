@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './Master_Course.css';
 import * as XLSX from 'xlsx';
 import axios from 'axios';
@@ -9,6 +9,7 @@ export default function Course() {
   const [searchTerm, setSearchTerm] = useState('');
   const [courseList, setCourseList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -47,10 +48,67 @@ export default function Course() {
         XLSX.writeFile(workbook, '과목_등록_기본_양식.xlsx');
     };
 
+    const handleBulkInsertClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
 
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+
+        reader.onload = async (event) => {
+            try {
+                const data = new Uint8Array(event.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+                if (jsonData.length === 0) {
+                    alert('엑셀 파일에 데이터가 없습니다. 확인해주세요.');
+                    return;
+                }
+
+                const trans = jsonData.map((row) => {
+                    const rawType = row['대학/대학원'] || '';
+                    const courseType = rawType.includes('대학원') ? 'GRADUATE' : 'UNDERGRADUATE';
+
+                    return axios.post('/api/master-courses', {
+                        course_code: (row['과목코드'] || ''),
+                        name: (row['과목명'] || ''),
+                        credit: (row['학점']) || 0,
+                        lecture: (row['이론']) || 0,
+                        practice: (row['실습']) || 0,
+                        course_type: courseType,
+                        is_core: true,
+                    })
+                });
+
+                await Promise.all(trans);
+                alert("엑셀 등록 성공 " + trans.length + "건 처리 완료");
+
+                const refreshed = await axios.get('/api/master-courses');
+                setCourseList(refreshed.data);
+            } catch (error) {
+                console.error('엑셀 등록 실패:', error);
+                alert('엑셀 등록 실패 ' + (error.response?.data?.detail || '통신 오류'));
+            }
+        };
+        reader.readAsArrayBuffer(file);
+        e.target.value = '';
+    };
+
+    if (loading) 
+        {
+            return <div className="Container">로딩 중...</div>;
+        }
 
     return (
         <div className="Container">
+            <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} accept=".xlsx, .xls" />
             <div className="Header">
                 <div>
                     <h1 className="page_title">과목 관리</h1>
@@ -62,7 +120,7 @@ export default function Course() {
                         <img src={downloadIcon} alt="다운로드 아이콘" className="btn_icon_img" />
                         기본 양식 다운로드
                     </button>
-                    <button className="btn">
+                    <button type="button" className="btn" onClick={handleBulkInsertClick}>
                         <span className="btn_icon">+</span>
                         과목 다중 등록
                     </button>
@@ -93,15 +151,15 @@ export default function Course() {
                     </tr>
                 </thead>
                 <tbody>
-                    {filteredCourses.map((course) => (
-                        <tr key={course.id}>
-                            <td className="col_id">{course.id}</td>
+                    {filteredCourses.map((course, index) => (
+                        <tr key={course.id || index}>
+                            <td className="col_id">{String(index + 1).padStart(2, '0')}</td>
                             <td className="col_name">{course.name}</td>
-                            <td>{course.course_code}</td>
-                            <td>{course.credit}</td>
-                            <td>{course.lecture}</td>
-                            <td>{course.practice}</td>
-                            <td>{course.course_type}</td>
+                            <td>{course.course_code || '-'}</td>
+                            <td>{course.credit ?? 0}</td>
+                            <td>{course.lecture ?? 0}</td>
+                            <td>{course.practice ?? 0}</td>
+                            <td>{course.course_type || '-'}</td>
                         </tr>
                     ))}
                 </tbody>
