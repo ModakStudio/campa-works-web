@@ -1,31 +1,32 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './Master_Course.css';
 import * as XLSX from 'xlsx';
+import axios from 'axios';
 import downloadIcon from '../../../assets/icons/down.png';
 import searchIcon from '../../../assets/icons/sear.png';
-
-const Courses = [
-  { id: '01', name: '자료구조', code: 'COME0331', credits: '3-3-0', capacity: 70, facility: '2층' },
-  { id: '02', name: '알고리즘', code: 'COME0320', credits: '3-2-2', capacity: 70, facility: '3층' },
-  { id: '03', name: '컴퓨터구조', code: 'COMP0411', credits: '3-3-0', capacity: 140, facility: '1층' },
-  { id: '04', name: '운영체제', code: 'COME0312', credits: '3-3-0', capacity: 140, facility: '1층' },
-  { id: '05', name: '이산수학', code: 'COME0331', credits: '3-3-0', capacity: 60, facility: '2층' },
-  { id: '06', name: '기계학습', code: 'COMP00720', credits: '3-3-0', capacity: 40, facility: '3층' },
-  { id: '07', name: '인공지능', code: 'COMP0324', credits: '3-3-0', capacity: 20, facility: '2층' },
-  { id: '08', name: '프로그래밍기초', code: 'COMP0204', credits: '3-2-2', capacity: 40, facility: '3층,컴퓨터' },
-  { id: '09', name: '데이터베이스', code: 'COMP0322', credits: '3-2-2', capacity: 70, facility: '3층' },
-  { id: '10', name: '소프트웨어공학', code: 'EECS0312', credits: '3-3-0', capacity: 40, facility: '2층' },
-];
 
 export default function Course() {
   const [searchTerm, setSearchTerm] = useState('');
   const [courseList, setCourseList] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    
+  useEffect(() => {
+    const fetchCourses = async () => {
+        try {
+                const response = await axios.get('/api/master-courses');
+                setCourseList(response.data);
+            } catch (error) {
+                console.error('Error fetching courses:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchCourses();
+    }, []);
 
 
-    const filteredCourses = Courses.filter(
-        (course) => course.name?.toLowerCase().includes(searchTerm.toLowerCase()) || course.code?.toLowerCase().includes(searchTerm.toLowerCase()));
+    const filteredCourses = courseList.filter(
+        (course) => course.name?.toLowerCase().includes(searchTerm.toLowerCase()) || course.course_code?.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const handleDownloadTemplate = () => {
         const templateData = [
@@ -86,8 +87,9 @@ export default function Course() {
                         <th>과목명</th>
                         <th>과목코드</th>
                         <th>학점</th>
-                        <th>인원수</th>
-                        <th>시설</th>
+                        <th>이론</th>
+                        <th>실습</th>
+                        <th>대학/대학원</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -95,10 +97,11 @@ export default function Course() {
                         <tr key={course.id}>
                             <td className="col_id">{course.id}</td>
                             <td className="col_name">{course.name}</td>
-                            <td>{course.code}</td>
-                            <td>{course.credits}</td>
-                            <td>{course.capacity}</td>
-                            <td>{course.facility}</td>
+                            <td>{course.course_code}</td>
+                            <td>{course.credit}</td>
+                            <td>{course.lecture}</td>
+                            <td>{course.practice}</td>
+                            <td>{course.course_type}</td>
                         </tr>
                     ))}
                 </tbody>
