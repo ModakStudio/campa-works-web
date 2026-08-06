@@ -63,10 +63,16 @@ export default function Lectureroom() {
               const workbook = XLSX.read(data, { type: 'array' });
               const sheetName = workbook.SheetNames[0];
               const worksheet = workbook.Sheets[sheetName];
-              const jsonData = XLSX.utils.sheet_to_json(worksheet);
+              const rawJsonData = XLSX.utils.sheet_to_json(worksheet);
 
-              const isExcelEmpty = jsonData.some((row) => row['건물'] === '예시 건물명' && row['강의실명'] === '예시 강의실명' && row['수용인원'] === '예시 수용인원');
-              if (isExcelEmpty) {
+              const jsonData = rawJsonData.filter((row) => 
+                !(
+                    row['건물'] === '예시 건물명' && 
+                    row['강의실명'] === '예시 강의실명' && 
+                    row['수용인원'] === '예시 수용인원'
+                )
+              );
+              if (jsonData.length === 0) {
                   alert('엑셀 파일이 비어있습니다. 확인 후 다시 시도해주세요.');
                   return;
               }
