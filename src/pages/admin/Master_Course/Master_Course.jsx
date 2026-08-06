@@ -67,6 +67,12 @@ export default function Course() {
                 const worksheet = workbook.Sheets[firstSheetName];
                 const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
+                const isExcelEmpty = jsonData.some((row) => row['과목코드'] === '예시 과목코드' && row['과목명'] === '예시 과목명' && row['학점'] === '예시 학점' && row['이론'] === '예시 이론' && row['실습'] === '예시 실습' && row['대학/대학원'] === '대학 or 대학원');
+                if (isExcelEmpty) {
+                    alert('엑셀 파일이 비어있습니다. 확인 후 다시 시도해주세요.');
+                    return;
+                }
+
                 const errors = [];
                 const isEmpty = (val) => val === undefined || val === null || String(val).trim() === '';
                 for (let i = 0; i < jsonData.length; i++){
