@@ -5,7 +5,7 @@ import Register from './pages/admin/Register/Registrer';
 import Dashboard from './pages/admin/Dashboard/Dashboard';
 import Layout from './component/Layout/Layout';
 import DashboardDetail from './pages/admin/DashboardDetail/DashboardDetail';
-import Course from './pages/admin/Course/Course';
+import Course from './pages/admin/Master_Course/Master_Course';
 import Lectureroom from './pages/admin/Lectureroom/Lectureroom';
 import Facility from './pages/admin/Facility/Facility';
 import Professor from './pages/admin/Professor/Professor';

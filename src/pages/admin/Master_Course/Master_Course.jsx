@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './Course.css';
+import './Master_Course.css';
 import downloadIcon from '../../../assets/icons/down.png';
 import searchIcon from '../../../assets/icons/sear.png';
 
@@ -16,8 +16,10 @@ const Courses = [
   { id: '10', name: '소프트웨어공학', code: 'EECS0312', credits: '3-3-0', capacity: 40, facility: '2층' },
 ];
 
-export default function Classroom() {
+export default function Course() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [courseList, setCourseList] = useState([]);
+
 
   const filteredCourses = Courses.filter(
     (course) => course.name.includes(searchTerm) || course.code.includes(searchTerm));
