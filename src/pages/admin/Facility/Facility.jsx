@@ -67,12 +67,13 @@ export default function Facility() {
               const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
               const errors = [];
+              const isEmpty = (val) => val === undefined || val === null || String(val).trim() === '';
               for (let i = 0; i < jsonData.length; i++) {
                   const row = jsonData[i];
                   const rownum = i + 2;
-                  if (!row['명칭'] || row['명칭'].trim() === '')
+                  if (isEmpty(row['명칭']))
                         errors.push("엑셀 "+ rownum +"행 명칭");
-                  if (!row['상세 설명'] || row['상세 설명'].trim() === '')
+                  if (isEmpty(row['상세 설명']))
                         errors.push("엑셀 "+ rownum +"행 상세 설명");
                 }
 
