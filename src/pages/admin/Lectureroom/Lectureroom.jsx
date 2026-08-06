@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './Lectureroom.css';
 import * as XLSX from 'xlsx';
 import axios from 'axios';
@@ -9,6 +9,7 @@ export default function Lectureroom() {
     const [searchTerm, setSearchTerm] = useState('');
     const [roomList, setRoomList] = useState([]);
     const [loading, setLoading] = useState(true);
+    const fileInputRef = useRef(null);
 
     useEffect(() => {
         const fetchRooms = async () => {
@@ -45,6 +46,57 @@ export default function Lectureroom() {
         XLSX.writeFile(workbook, '강의실_등록_기본_양식.xlsx');
     };
 
+    const handleBulkInsertClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+
+        reader.onload = async (event) => {
+          try {
+              const data = new Uint8Array(event.target.result);
+              const workbook = XLSX.read(data, { type: 'array' });
+              const sheetName = workbook.SheetNames[0];
+              const worksheet = workbook.Sheets[sheetName];
+              const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+              if (jsonData.length === 0) {
+                  alert("엑셀 파일에 데이터가 없습니다. 확인해주세요.");
+                  return;
+              }
+
+              const trans = jsonData.map((row) => {
+                  const rawStatus = row['사용 여부'] || '';
+                  const isAvailable = rawStatus.includes('불가') ? false : true;
+
+                  return axios.post('/api/classrooms', {
+                      building: (row['건물'] || ''),
+                      room: (row['강의실명'] || ''),
+                      capacity: (row['수용인원']) || 0,
+                      is_available: isAvailable,
+                  });
+              });
+
+              await Promise.all(trans);
+
+              alert("엑셀 등록 성공 " + trans.length + "건 처리 완료");
+              const refreshed = await axios.get('/api/classrooms');
+              setRoomList(refreshed.data);
+          } catch (error) {
+              console.error('Error processing Excel file:', error);
+              alert("엑셀 등록 실패 " + (error.response?.data?.detail || "통신 오류"));
+          }
+        };
+        reader.readAsArrayBuffer(file);
+        e.target.value = '';
+    };
+
+
     if (loading)
       {
           return <div className="Container">로딩 중...</div>;
@@ -52,6 +104,7 @@ export default function Lectureroom() {
 
     return (
       <div className="Container">
+        <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} accept=".xlsx, .xls" />
         <div className="Header">
           <div>
             <h1 className="page_title">강의실 관리</h1>
@@ -63,7 +116,7 @@ export default function Lectureroom() {
               <img src={downloadIcon} alt="다운로드 아이콘" className="btn_icon_img" />
               기본 양식 다운로드
             </button>
-            <button className="btn">
+            <button className="btn" onClick={handleBulkInsertClick}>
               <span className="btn_icon">+</span>
               강의실 다중 등록
             </button>
@@ -99,13 +152,13 @@ export default function Lectureroom() {
             <tbody>
               {filteredData.length > 0 ? (
                 filteredData.map((row, index) => (
-                  <tr key={row.id || index}>
-                    <td className="col_id">{String(index + 1).padStart(2, '0')}</td>
-                    <td>{row.building || '-'}</td>
-                    <td className="col_name">{row.room || '-'}</td>
-                    <td>{row.capacity ?? 0}명</td>
-                    <td>{row.is_available ? '가능' : '불가능'}</td>
-                  </tr>
+                    <tr key={row.id || index}>
+                      <td className="col_id">{String(index + 1).padStart(2, '0')}</td>
+                      <td>{row.building || '-'}</td>
+                      <td className="col_name">{row.room || '-'}</td>
+                      <td>{row.capacity ?? 0}명</td>
+                      <td>{row.is_available ? '가능' : '불가능'}</td>
+                    </tr>
                 ))
               ) : (
                 <tr>
