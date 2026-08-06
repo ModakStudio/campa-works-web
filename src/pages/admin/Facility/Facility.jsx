@@ -1,24 +1,34 @@
-import { useState, useRef } from 'react';
+import { useState, useRef,useEffect } from 'react';
 import './Facility.css';
 import * as XLSX from 'xlsx';
 import axios from 'axios';
 import downloadIcon from '../../../assets/icons/down.png';
 import searchIcon from '../../../assets/icons/sear.png';
 
-const DummyData = [
-  { id: 1, number: '01', name: '1층', description: '-' },
-  { id: 2, number: '02', name: '2층', description: '-' },
-  { id: 3, number: '03', name: '3층', description: '-' },
-  { id: 4, number: '04', name: '컴퓨터', description: '기자재 컴퓨터' },
-];
 
 export default function Facility() {
+    const [facilityList, setFacilityList] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const fileInputRef = useRef(null);
 
-    const filteredData = DummyData.filter(
+    useEffect(() => {
+    const fetchFacilities = async () => {
+          try {
+              const response = await axios.get('/api/facilities');
+              setFacilityList(response.data);
+          } catch (error) {
+              console.error('Error fetching facilities:', error);
+          } finally {
+              setLoading(false);
+          }
+      };
+      fetchFacilities();
+    }, []);
+
+    const filteredData = facilityList.filter(
     (item) =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) || item.description.toLowerCase().includes(searchTerm.toLowerCase()));
+      item.name?.toLowerCase().includes(searchTerm.toLowerCase()) || item.description?.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const handleDownloadTemplate = () => {
         const templateData = [
@@ -47,27 +57,43 @@ export default function Facility() {
         const file = e.target.files[0];
         if(!file) return;
 
-        const formData = new FormData();
-        formData.append('file',file);
+        const reader  = new FileReader();
+        reader.onload = async (event) => {
+          try{
+              const data = new Uint8Array(event.target.result);
+              const workbook = XLSX.read(data, { type: 'array' });
+              const firstSheetName = workbook.SheetNames[0];
+              const worksheet = workbook.Sheets[firstSheetName];
+              const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-        try{
-            const response = await axios.post('http://localhost:8000/upload-excel', formData,
-                {
-                    headers:
-                    {
-                        'Content-Type' : 'multipart/form-data'
-                    },
-                });
+              const trans = jsonData.map((row) =>
+                    axios.post('/api/facilities',
+                      {
+                        name: row['명칭'] || '',
+                        description: row['상세 설명'] || '',
+                      })
+                );
 
-                alert("엑셀 등록 성공 "+ response.data.total_count+"건 처리 완료");
-        }catch(error){
-            console.error('엑셀 등록 실패:', error);
-            alert("엑셀 등록 실패" + (error.response?.data?.detail || "통신 오류"));
-        }finally{
-            e.target.value = '';
-        }
+              await Promise.all(trans);
+
+                alert("엑셀 등록 성공 "+ trans.length+"건 처리 완료");
+                const refreshed = await axios.get('/api/facilities');
+                setFacilityList(refreshed.data);
+            } catch (error) {
+                console.error('엑셀 등록 실패:', error);
+                alert('엑셀 등록 실패 ' + (error.response?.data?.detail || '통신 오류'));
+            } finally {
+                e.target.value = '';
+            }
+        };
+        reader.readAsArrayBuffer(file);
     };
 
+  if (loading)
+      {
+        return <div className="Container">로딩 중...</div>;
+      }
+      
   return (
     <div className="Container">
         <input type="file" ref={fileInputRef} style={{ display: 'none' }} accept=".xlsx, .xls" onChange={handleFileChange} />
@@ -114,11 +140,11 @@ export default function Facility() {
               </thead>
               <tbody>
                 {filteredData.length > 0 ? (
-                  filteredData.map((row) => (
-                    <tr key={row.id}>
-                      <td className="col_id">{row.number}</td>
+                  filteredData.map((row, index) => (
+                    <tr key={row.id || index}>
+                      <td className="col_id">{String(index + 1).padStart(2, '0')}</td>
                       <td className="col_name">{row.name}</td>
-                      <td className="col_description">{row.description}</td>
+                      <td className="col_description">{row.description || '-'}</td>
                     </tr>
                   ))
                 ) : (
