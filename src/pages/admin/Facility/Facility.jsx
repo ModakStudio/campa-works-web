@@ -66,6 +66,12 @@ export default function Facility() {
               const worksheet = workbook.Sheets[firstSheetName];
               const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
+              const isExcelEmpty = jsonData.some((row) => row['명칭'] === '예시 시설명' && row['상세 설명'] === '예시 상세 설명');
+              if (isExcelEmpty) {
+                  alert('엑셀 파일이 비어있습니다. 확인 후 다시 시도해주세요.');
+                  return;
+              }
+
               const errors = [];
               const isEmpty = (val) => val === undefined || val === null || String(val).trim() === '';
               for (let i = 0; i < jsonData.length; i++) {
