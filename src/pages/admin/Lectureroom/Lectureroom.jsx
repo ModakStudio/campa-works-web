@@ -65,10 +65,23 @@ export default function Lectureroom() {
               const worksheet = workbook.Sheets[sheetName];
               const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-              if (jsonData.length === 0) {
-                  alert("엑셀 파일에 데이터가 없습니다. 확인해주세요.");
-                  return;
-              }
+              const errors = [];
+              for(let i = 0; i < jsonData.length; i++) {
+                  const row = jsonData[i];
+                  const rownum = i + 2;
+                  if(!row['건물'] || row['건물'].trim()=== '')
+                      errors.push("엑셀 "+ rownum +"행 건물명");
+                  if(!row['강의실명'] || row['강의실명'].trim()=== '')
+                      errors.push("엑셀 "+ rownum +"행 강의실명");
+                  if(!row['수용인원'] || String(row['수용인원']).trim()=== '')
+                      errors.push("엑셀 "+ rownum +"행 수용인원");
+                }
+
+                if(errors.length > 0)
+                  {
+                      alert("다음 항목의 값들이 비어있습니다. 채워주세요.\n- " + errors.join("\n- "));
+                      return;
+                  }
 
               const trans = jsonData.map((row) => {
                   const rawStatus = row['사용 여부'] || '';
