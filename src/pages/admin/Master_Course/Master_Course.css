@@ -104,6 +104,7 @@
 .table_container{
   background-color: #ffffff;
   border: 1px solid #cccccc;
+  overflow-x: auto;
 }
 
 .course_table{
@@ -111,6 +112,8 @@
   border-collapse: collapse;
   text-align: center;
   font-size: 13px;
+  table-layout: fixed;
+  
 }
 
 .course_table th{
@@ -119,12 +122,25 @@
   font-weight: 500;
   padding: 10px 12px;
   border-bottom: 1px solid #a0a0a0;
+  table-layout: fixed;
+  border-right: 1px solid var(--border-color);
 }
 
 .course_table td{
   padding: 12px;
   border-bottom: 1px solid #e0e0e0;
   color: #a5a5a5;
+  border-right: 1px solid var(--border-color);
+}
+
+.course_table th:last-child,
+.course_table td:last-child {
+  border-right: none;
+}
+
+.bcourse_code{
+  font-family: Consolas, monospace;
+  font-variant-numeric: tabular-nums;
 }
 
 .course_table td.col_id{

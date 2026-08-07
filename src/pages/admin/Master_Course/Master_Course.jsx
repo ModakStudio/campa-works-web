@@ -37,7 +37,8 @@ export default function Course() {
                 '학점': '예시 학점',
                 '이론': '예시 이론',
                 '실습': '예시 실습',
-                '대학/대학원': '대학 or 대학원'
+                '대학/대학원': '대학 or 대학원',
+                'is_core': 'Y or '
             }
         ];
 
@@ -108,6 +109,7 @@ export default function Course() {
                 const trans = jsonData.map((row) => {
                     const rawType = row['대학/대학원'] || '';
                     const courseType = rawType.includes('대학원') ? 'GRADUATE' : 'UNDERGRADUATE';
+                    const isCoreValue = String(row['is_core'] || '').trim().toUpperCase() === 'Y';
 
                     return axios.post('/api/master-courses', {
                         course_code: (row['과목코드'] || ''),
@@ -116,12 +118,19 @@ export default function Course() {
                         lecture: (row['이론']) || 0,
                         practice: (row['실습']) || 0,
                         course_type: courseType,
-                        is_core: true,
+                        is_core: isCoreValue,
                     })
                 });
 
-                await Promise.all(trans);
-                alert("엑셀 등록 성공 " + trans.length + "건 처리 완료");
+                const connected =await Promise.allSettled(trans);
+                const SuccessCnt = connected.filter(result => result.status === 'fulfilled').length;
+                const FailCnt = connected.filter(result => result.status === 'rejected').length;
+                
+                if (FailCnt > 0) {
+                    alert("엑셀 등록 성공 " + SuccessCnt + "건, 실패 " + FailCnt + "건 (중복된 과목 코드)");
+                } else {
+                    alert("엑셀 등록 성공 " + SuccessCnt + "건 처리 완료");
+                }
 
                 const refreshed = await axios.get('/api/master-courses');
                 setCourseList(refreshed.data);
@@ -174,25 +183,27 @@ export default function Course() {
                 <table className="course_table">
                 <thead>
                     <tr>
-                        <th style={{ width: "60px" }}>#</th>
-                        <th>과목명</th>
-                        <th>과목코드</th>
-                        <th>학점</th>
-                        <th>이론</th>
-                        <th>실습</th>
-                        <th>대학/대학원</th>
+                        <th style={{ width: "5%" }}>#</th>
+                        <th style={{ width: "25%" }}>과목명</th>
+                        <th style={{ width: "10%" }}>과목코드</th>
+                        <th style={{ width: "5%" }}>학점</th>
+                        <th style={{width: "5%"}}>이론</th>
+                        <th style={{ width: "5%" }}>실습</th>
+                        <th style={{ width: "10%" }}>대학/대학원</th>
+                        <th style={{ width: "5%" }}>코어과목</th>
                     </tr>
                 </thead>
                 <tbody>
                     {filteredCourses.map((course, index) => (
                         <tr key={course.id || index}>
-                            <td className="col_id">{String(index + 1).padStart(2, '0')}</td>
+                            <td className="col_id">{String(index + 1).padStart(3, '0')}</td>
                             <td className="col_name">{course.name}</td>
-                            <td>{course.course_code || '-'}</td>
+                            <td className="bcourse_code">{course.course_code || '-'}</td>
                             <td>{course.credit ?? 0}</td>
                             <td>{course.lecture ?? 0}</td>
                             <td>{course.practice ?? 0}</td>
-                            <td>{course.course_type || '-'}</td>
+                            <td>{course.course_type === 'GRADUATE' ? '대학원' : course.course_type === 'UNDERGRADUATE' ? '대학' : '-'}</td>
+                            <td style={{color: 'green'}}>{course.is_core ? '✔' : ' '}</td>
                         </tr>
                     ))}
                 </tbody>
