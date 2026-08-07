@@ -97,8 +97,6 @@ export default function Course() {
                         errors.push("엑셀 "+ rownum +"행 이론");
                     if (isEmpty(row['실습']))
                         errors.push("엑셀 "+ rownum +"행 실습");
-                    if (isEmpty(row['대학/대학원']))
-                        errors.push("엑셀 "+ rownum +"행 대학/대학원");
                 }
 
                 if (errors.length > 0)
