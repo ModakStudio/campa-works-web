@@ -18,7 +18,6 @@ export default function Login()
             {
                 const response = await axios.get('/api/users');
                 const users = response.data;
-
                 const user = users.find((user) => user.email === email);
 
                 if(!user)
@@ -28,23 +27,15 @@ export default function Login()
                 }
 
                 if (user.role === 'ADMIN')
-                {
                     navigate('/dashboard');
-                }
                 else if (user.role === 'PROFESSOR')
-                {
                     navigate('/professor/settings');
-                }
 
             }
             
             catch (error)
                 {
                     console.error('Login error:', error);
-                    if(error.response && error.response.status === 404)
-                    {
-                        alert('존재하지 않는 계정입니다.\n회원가입을 진행해주세요');
-                    }
                 }
     };
 
@@ -62,8 +53,7 @@ export default function Login()
                         placeholder="이메일을 입력하세요."
                         value={email}
                         onChange={(e)=>setEmail(e.target.value)}
-                        required>
-                    </input>
+                        required/>
                 </div>
 
                 <div className="loginFormGroup">
@@ -74,8 +64,7 @@ export default function Login()
                         placeholder="비밀번호를 입력하세요."
                         value={password}
                         onChange={(e)=>setPassword(e.target.value)}
-                        required>
-                    </input>
+                        required/>
                 </div>
                 <button type="submit" className="btn btnLogin">로그인</button>
                 <button type="button" className="btn btnRegister"
