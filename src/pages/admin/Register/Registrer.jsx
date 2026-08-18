@@ -1,16 +1,17 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import './Register.css';
+import axios from "axios";
 
 export default function Register()
 {
     const [formData, setFormData] = 
     useState({
         email: '',
-        username: '',
+        name: '',
         password: '',
         confirmPassword: '',
-        role: '교수'
+        role: 'PROFESSOR'
     });
 
     const navigate = useNavigate();
@@ -24,7 +25,7 @@ export default function Register()
         }));
     };
 
-    const handleSubmit = (e) =>
+    const handleSubmit = async (e) =>
         {
             e.preventDefault()
             if (formData.password !== formData.confirmPassword)
@@ -32,9 +33,24 @@ export default function Register()
                     alert('비밀번호가 일치하지 않습니다.');
                     return;
                 }
-            console.log('회원가입 시도:', formData);
-            alert('회원가입이 완료되었습니다.');
-            navigate('/login')
+
+            try
+            {
+                await axios.post('/api/users', {
+                    email: formData.email,
+                    name: formData.name,
+                    password: formData.password,
+                    role: formData.role
+                });
+                console.log('회원가입 시도:', formData);
+                alert('회원가입이 완료되었습니다.');
+                navigate('/login')
+            }
+            catch (error)
+            {
+                console.error('회원가입 오류:', error);
+                alert('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
+            }
         };
 
     return(
@@ -44,6 +60,19 @@ export default function Register()
 
         <form onSubmit={handleSubmit}>
             <div className="registerFormGroup">
+                <label htmlFor="name">이름</label>
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="이름을 입력하세요"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required>
+                </input>
+            </div>
+
+            <div className="registerFormGroup">
                 <label htmlFor="email">이메일</label>
                 <input
                     type="email"
@@ -51,19 +80,6 @@ export default function Register()
                     name="email"
                     placeholder="이메일을 입력하세요"
                     value={formData.email}
-                    onChange={handleChange}
-                    required>
-                </input>
-            </div>
-
-            <div className="registerFormGroup">
-                <label htmlFor="username">아이디</label>
-                <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    placeholder="아이디를 입력하세요"
-                    value={formData.username}
                     onChange={handleChange}
                     required>
                 </input>
@@ -101,7 +117,7 @@ export default function Register()
                     type="radio"
                     name="role"
                     value="교수"
-                    checked={formData.role === '교수'}
+                    checked={formData.role === 'PROFESSOR'}
                     onChange={handleChange}>
                 </input>
                 <span>교수</span>
@@ -111,7 +127,7 @@ export default function Register()
                     type="radio"
                     name="role"
                     value="조교"
-                    checked={formData.role === '조교'}
+                    checked={formData.role === 'ASSISTANT'}
                     onChange={handleChange}>
                 </input>
                 <span>조교</span>
