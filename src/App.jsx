@@ -9,6 +9,7 @@ import MasterCourse from './pages/admin/Master_Course/Master_Course';
 import Lectureroom from './pages/admin/Lectureroom/Lectureroom';
 import Facility from './pages/admin/Facility/Facility';
 import Professor from './pages/admin/Professor/Professor';
+import Setting from './pages/professor/Setting/Setting';
 //import Header from './component/Header/Header';
 //import Sidebar from './component/Sidebar/sidebar';
 
@@ -27,6 +28,8 @@ function App() {
           <Route path="/lectureroom" element={<Layout><Lectureroom/></Layout>}/>
           <Route path="/facility" element={<Layout><Facility/></Layout>}/>
           <Route path="/professor" element={<Layout><Professor/></Layout>}/>
+
+          <Route path="/setting" element={<Layout><Setting/></Layout>}/>
           {/* <Route path="/Header" element={<Header/>}/> */}
           {/*<Route path="/sidebar" element={<Sidebar/>}/>*/}
 
