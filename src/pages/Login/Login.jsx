@@ -26,10 +26,12 @@ export default function Login()
                     return;
                 }
 
+                localStorage.setItem('userRole', user.role);
+
                 if (user.role === 'ADMIN')
                     navigate('/dashboard');
                 else if (user.role === 'PROFESSOR')
-                    navigate('/professor/settings');
+                    navigate('/professor/setting');
 
             }
             
