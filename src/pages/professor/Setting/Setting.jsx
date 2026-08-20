@@ -10,7 +10,9 @@ export default function Setting() {
   const [office, setOffice] = useState('');
   const [research, setResearch] = useState('');
   const [tel, setTel] = useState('');
-  const [position, setPosition] = useState('');
+  const [position, setPosition] = useState('PROFESSOR');
+  const [isEdit, setIsEdit] = useState(false);
+  const [initialData, setInitialData] = useState(null);
 
   const professorId = localStorage.getItem('professorId');
 
@@ -27,7 +29,8 @@ export default function Setting() {
         setOffice(data.office||'');
         setResearch(data.research_field||'');
         setTel(data.tel||'');
-        setPosition(data.position||'');
+
+        if(data.position) setPosition(data.position);
       }
 
       catch (error)
@@ -41,17 +44,28 @@ export default function Setting() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if(!isEdit)
+    {
+      setIsEdit(true);
+      return;
+    }
+
     try
     {
-      await axios.put('/api/professors/'+professorId,
+      await axios.patch('/api/professors/'+professorId,
         {
           office,
-          research: research,
+          research_field: research,
           tel,
           position,
           ...(password && {password})
         });
       alert('정보가 성공적으로 업데이트되었습니다.');
+      setIsEdit(false);
+      setPassword('');
+
+      setInitialData((prev) => ({...prev, office, research_field: research, tel}));
     }
 
     catch (error)
@@ -59,6 +73,17 @@ export default function Setting() {
       console.error('Update professor error:', error);
       alert('정보 수정 중 오류가 발생했습니다.');
     }
+  };
+
+  const handleCancel = () => {
+    if(initialData)
+    {
+      setOffice(initialData.office||'');
+      setResearch(initialData.research_field||'');
+      setTel(initialData.tel||'');
+    }
+    setPassword('');
+    setIsEdit(false);
   };
 
   return(
@@ -100,9 +125,10 @@ export default function Setting() {
             type="password"
             id="password"
             className="setting_input"
-            value={password}
+            value={isEdit ? password : '********'}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="********"
+
+            disabled={!isEdit}
           />
         </div>
         
@@ -114,6 +140,7 @@ export default function Setting() {
             className="setting_input"
             value={office}
             onChange={(e) => setOffice(e.target.value)}
+            disabled={!isEdit}
           />
         </div>
 
@@ -125,6 +152,7 @@ export default function Setting() {
             className="setting_input"
             value={research}
             onChange={(e) => setResearch(e.target.value)}
+            disabled={!isEdit}
           />
         </div>
 
@@ -136,6 +164,7 @@ export default function Setting() {
             className="setting_input"
             value={tel}
             onChange={(e) => setTel(e.target.value)}
+            disabled={!isEdit}
           />
         </div>
 
@@ -144,9 +173,10 @@ export default function Setting() {
           <input
             type="radio"
             name="position"
-            checked={position === 'Professor'}
-            value="Professor"
+            checked={position === 'PROFESSOR'}
+            value="PROFESSOR"
             onChange={(e) => setPosition(e.target.value)}
+            disabled={!isEdit}
           />
           교수
           </label>
@@ -154,15 +184,21 @@ export default function Setting() {
           <input
             type="radio"
             name="position"
-            checked={position === 'V'}
-            value="Assistant"
+            checked={position === 'ASSISTANT'}
+            value="ASSISTANT"
             onChange={(e) => setPosition(e.target.value)}
+            disabled={!isEdit}
           />
           조교
           </label>
         </div>
-
-        <button type="submit" className="btn submit">개인 정보 수정</button>
+        <div className='setting_btn_group'>
+          <button type="submit" className={"setting_btn_submit" + (isEdit ? " edit":"")}>
+            {isEdit?'정보 저장하기':'개인 정보 수정'}</button>
+          {isEdit  && (<button type="button" className="setting_btn_cancel" onClick={handleCancel}>
+            취소
+          </button>)}
+        </div>
       </form>
     </div>
   );
