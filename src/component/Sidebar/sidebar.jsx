@@ -24,11 +24,11 @@ const menuItems = {
     { name: '교수 현황', path: '/professor', icon: professorIcon },
   ],
   PROFESSOR: [
-    { name: '대시보드', path: '/dashboard', icon: dashboardIcon },
-    { name: '과목 선호도 제출', path: '/assignments', icon: majorIcon },
-    { name: '내 배정 결과', path: '/assignments', icon: assignmentIcon },
-    { name: '강의 시간표', path: '/schedules', icon: scheduleIcon },
-    { name: '출장 신청', path: '/business-trips', icon: businessTripIcon },
+    { name: '대시보드', path: '/professor/dashboard', icon: dashboardIcon },
+    { name: '과목 선호도 제출', path: '/professor/assignments', icon: majorIcon },
+    { name: '내 배정 결과', path: '/professor/assignments', icon: assignmentIcon },
+    { name: '강의 시간표', path: '/professor/schedules', icon: scheduleIcon },
+    { name: '출장 신청', path: '/professor/business-trips', icon: businessTripIcon },
     { name: '설정', path: '/professor/setting', icon: professorIcon },
   ]
 };
