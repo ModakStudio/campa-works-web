@@ -21,13 +21,13 @@ export default function Setting() {
         const response = await axios.get('/api/professors/'+professorId);
         const data = response.data;
 
-        setName(data.name);
-        setEmail(data.email);
-        setPassword(data.password);
-        setOffice(data.office);
-        setResearch(data.research_field);
-        setTel(data.tel);
-        setPosition(data.position);
+        setName(data.user?.name||'');
+        setEmail(data.user?.email||'');
+        setPassword(data.password||'');
+        setOffice(data.office||'');
+        setResearch(data.research_field||'');
+        setTel(data.tel||'');
+        setPosition(data.position||'');
       }
 
       catch (error)
@@ -77,6 +77,7 @@ export default function Setting() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
+            disabled
           />
         </div>
 
@@ -89,6 +90,7 @@ export default function Setting() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            disabled
           />
         </div>
 

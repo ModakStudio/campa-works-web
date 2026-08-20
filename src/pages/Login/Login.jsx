@@ -27,11 +27,22 @@ export default function Login()
                 }
 
                 localStorage.setItem('userRole', user.role);
+                
 
                 if (user.role === 'ADMIN')
                     navigate('/dashboard');
                 else if (user.role === 'PROFESSOR')
-                    navigate('/professor/setting');
+                    {
+                        const Profdata=await axios.get('/api/professors');
+                        const ProInfo=Profdata.data.find((p)=>p.user?.id === user.id);
+                        localStorage.setItem('professorId', ProInfo.id);
+
+                        if(ProInfo)
+                        {
+                            localStorage.setItem('professorId', ProInfo.id);
+                            navigate('/professor/setting');
+                        }
+                    }
 
             }
             
