@@ -16,7 +16,7 @@ import Setting from './pages/professor/Setting/Setting';
 
 
 function App() {
-  const userRole = localStorage.getItem('userRole') || 'PROFESSOR';
+  const userRole = sessionStorage.getItem('userRole') || 'PROFESSOR';
   return (
     <BrowserRouter>
       <Routes>

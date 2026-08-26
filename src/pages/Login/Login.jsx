@@ -26,7 +26,7 @@ export default function Login()
                     return;
                 }
 
-                localStorage.setItem('userRole', user.role);
+                sessionStorage.setItem('userRole', user.role);
                 
 
                 if (user.role === 'ADMIN')
@@ -35,11 +35,11 @@ export default function Login()
                     {
                         const Profdata=await axios.get('/api/professors');
                         const ProInfo=Profdata.data.find((p)=>p.user?.id === user.id);
-                        localStorage.setItem('professorId', ProInfo.id);
+                        sessionStorage.setItem('professorId', ProInfo.id);
 
                         if(ProInfo)
                         {
-                            localStorage.setItem('professorId', ProInfo.id);
+                            sessionStorage.setItem('professorId', ProInfo.id);
                             navigate('/professor/setting');
                         }
                     }

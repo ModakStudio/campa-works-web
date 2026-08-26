@@ -14,7 +14,7 @@ export default function Setting() {
   const [isEdit, setIsEdit] = useState(false);
   const [initialData, setInitialData] = useState(null);
 
-  const professorId = localStorage.getItem('professorId');
+  const professorId = sessionStorage.getItem('professorId');
 
   useEffect(() => {
     const fetchData = async () => {
