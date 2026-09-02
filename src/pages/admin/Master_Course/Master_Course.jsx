@@ -10,6 +10,11 @@ export default function Course() {
   const [courseList, setCourseList] = useState([]);
   const [loading, setLoading] = useState(true);
   const fileInputRef = useRef(null);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+
+  const handleSort = (key) => {
+    setSortConfig((prev) => ({key, direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'}));
+  };
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -29,6 +34,19 @@ export default function Course() {
     const filteredCourses = courseList.filter(
         (course) => course.name?.toLowerCase().includes(searchTerm.toLowerCase()) || course.course_code?.toLowerCase().includes(searchTerm.toLowerCase()));
 
+    const sortedCourses = [...filteredCourses].sort((a, b) => {
+        if (!sortConfig.key) return 0;
+
+        const aValue = a[sortConfig.key] ?? '';
+        const bValue = b[sortConfig.key] ?? '';
+
+        if (typeof aValue === 'boolean')
+            return sortConfig.direction === 'asc' ? (aValue === bValue ? 0 : aValue ? -1 : 1) : (aValue === bValue ? 0 : aValue ? 1 : -1);
+        if (typeof aValue === 'number' && typeof bValue === 'number')
+            return sortConfig.direction === 'asc' ? aValue - bValue : bValue - aValue;
+        return sortConfig.direction === 'asc' ? String(aValue).localeCompare(String(bValue), 'ko') : String(bValue).localeCompare(String(aValue), 'ko');
+    });
+
     const handleDownloadTemplate = () => {
         const templateData = [
             {
@@ -37,7 +55,7 @@ export default function Course() {
                 '학점': '예시 학점',
                 '이론': '예시 이론',
                 '실습': '예시 실습',
-                '대학/대학원': '대학 or 대학원',
+                '학부/대학원': '학부 or 대학원',
                 'is_core': 'Y or '
             }
         ];
@@ -117,6 +135,8 @@ export default function Course() {
                         credit: (row['학점']) || 0,
                         lecture: (row['이론']) || 0,
                         practice: (row['실습']) || 0,
+                        major: (row['전공'] || ''),
+                        semester: (row['학기'] || ''),
                         course_type: courseType,
                         is_core: isCoreValue,
                     })
@@ -184,21 +204,43 @@ export default function Course() {
                 <thead>
                     <tr>
                         <th style={{ width: "5%" }}>#</th>
-                        <th style={{ width: "25%" }}>과목명</th>
-                        <th style={{ width: "10%" }}>과목코드</th>
-                        <th style={{ width: "5%" }}>학점</th>
-                        <th style={{width: "5%"}}>이론</th>
-                        <th style={{ width: "5%" }}>실습</th>
-                        <th style={{ width: "10%" }}>대학/대학원</th>
-                        <th style={{ width: "5%" }}>코어과목</th>
+                        <th style={{ width: "17%", cursor: "pointer" }} onClick={() => handleSort('name')}>
+                            과목명 {sortConfig.key === 'name' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : '↕'}
+                        </th>
+                        <th style={{ width: "10%", cursor: "pointer" }} onClick={() => handleSort('course_code')}>
+                            과목코드 {sortConfig.key === 'course_code' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : '↕'}
+                        </th>
+                        <th style={{ width: "10%", cursor: "pointer" }} onClick={() => handleSort('major')}>
+                            전공 {sortConfig.key === 'major' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : '↕'}
+                        </th>
+                        <th style={{ width: "5%", cursor: "pointer" }} onClick={() => handleSort('semester')}>
+                            학기 {sortConfig.key === 'semester' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : '↕'}
+                        </th>
+                        <th style={{ width: "5%", cursor: "pointer" }} onClick={() => handleSort('credit')}>
+                            학점 {sortConfig.key === 'credit' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : '↕'}
+                        </th>
+                        <th style={{width: "5%", cursor: "pointer"}} onClick={() => handleSort('lecture')}>
+                            이론 {sortConfig.key === 'lecture' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : '↕'}
+                        </th>
+                        <th style={{ width: "5%", cursor: "pointer" }} onClick={() => handleSort('practice')}>
+                            실습 {sortConfig.key === 'practice' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : '↕'}
+                        </th>
+                        <th style={{ width: "10%", cursor: "pointer" }} onClick={() => handleSort('course_type')}>
+                            학부/대학원 {sortConfig.key === 'course_type' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : '↕'}
+                        </th>
+                        <th style={{ width: "7%", cursor: "pointer" }} onClick={() => handleSort('is_core')}>
+                            코어 과목 {sortConfig.key === 'is_core' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : '↕'}
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
-                    {filteredCourses.map((course, index) => (
+                    {sortedCourses.map((course, index) => (
                         <tr key={course.id || index}>
                             <td className="col_id">{String(index + 1).padStart(3, '0')}</td>
                             <td className="col_name">{course.name}</td>
                             <td className="bcourse_code">{course.course_code || '-'}</td>
+                            <td>{course.curriculum?.major?.name || '-'}</td>
+                            <td>{course.curriculum?.semester?.name || (course.semester ? `${course.semester}학기` : '-')}</td>
                             <td>{course.credit ?? 0}</td>
                             <td>{course.lecture ?? 0}</td>
                             <td>{course.practice ?? 0}</td>
