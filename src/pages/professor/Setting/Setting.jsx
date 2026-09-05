@@ -73,17 +73,16 @@ export default function Setting() {
           ...(password && {password})
         });
 
-      await axios.patch('/api/professor-quotas/', 
+      const firstQuotaData = quotas.find((q) => q.semester?.id === 1);
+      const secondQuotaData = quotas.find((q) => q.semester?.id === 2);
+
+      await axios.patch('/api/professor-quotas/'+firstQuotaData?.id, 
         {
-          professor_id: professorId,
-          semester_id: 1,
           quota_value: firstQuota,
         });
 
-      await axios.patch('/api/professor-quotas/',
+      await axios.patch('/api/professor-quotas/'+secondQuotaData?.id,
         {
-          professor_id: professorId,
-          semester_id: 2,
           quota_value: secondQuota,
         });
 
@@ -97,6 +96,7 @@ export default function Setting() {
     catch (error)
     {
       console.error('Update professor error:', error);
+      console.error('서버 응답:', error.response?.data);
       alert('정보 수정 중 오류가 발생했습니다.');
     }
   };
@@ -205,7 +205,7 @@ export default function Setting() {
                         type="number"
                         className="setting_input quota_input"
                         value={firstQuota}
-                        onChange={(e) => setFirstQuota(e.target.value)}
+                        onChange={(e) => setFirstQuota(Number(e.target.value))}
                         disabled={!isEdit}
                     />
                 </div>
@@ -215,7 +215,7 @@ export default function Setting() {
                         type="number"
                         className="setting_input quota_input"
                         value={secondQuota}
-                        onChange={(e) => setSecondQuota(e.target.value)}
+                        onChange={(e) => setSecondQuota(Number(e.target.value))}
                         disabled={!isEdit}
                     />
                 </div>
