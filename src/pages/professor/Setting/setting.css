@@ -145,3 +145,30 @@
 .setting_btn_cancel:hover {
   background-color: #920000;
 }
+
+.quota_container {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    width: 100%;
+}
+
+.quota_input_group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  flex-direction: row;
+}
+
+.quota_label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #000000;
+  white-space: nowrap;
+}
+
+.quota_input {
+    flex: 1;
+    width: 100%;
+}
